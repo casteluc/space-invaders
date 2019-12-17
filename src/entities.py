@@ -6,13 +6,13 @@ RIGHT, LEFT = 0, 1
 
 class Ship():
 
-    def __init__(self, screenSize):
-        self.size = (15, 15)
+    def __init__(self, size, x, y, speed):
+        self.size = (size, size)
         self.surface = pygame.Surface(self.size)
         self.surface.fill((0, 255, 0))
-        self.x = screenSize[0] // 2
-        self.y = screenSize[1] - 120
-        self.speed = 5
+        self.x = x
+        self.y = y
+        self.speed = speed
     
     # Moves the ship according to its speed
     def move(self, direction):
@@ -24,6 +24,11 @@ class Ship():
     # Draws the ship in the screen
     def draw(self, screen):
         screen.blit(self.surface, (self.x, self.y))
+
+class Enemy(Ship):
+    def __init__(self, size, x, y, speed):
+        super().__init__(size, x, y, speed)
+        self.surface.fill((255, 0, 0))
     
 class Bullet():
 
@@ -46,6 +51,9 @@ class Bullet():
     # Draws the bullet in the screen
     def draw(self, screen):
         screen.blit(self.surface, (self.x, self.y))
+    
+    def collided(self, ship):
+        pass
     
 
     

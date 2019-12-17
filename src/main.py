@@ -14,8 +14,15 @@ screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
 
 # Defines the entities variables
-ship = entities.Ship(screenSize)
+ship = entities.Ship(20, (width // 2), (height - 120), 5)
 bullets = []
+
+enemies = []
+nRows, nColumns = 3, 10
+enemiesX, enemiesY = 50, 60
+for i in range(nColumns):
+    for j in range (nRows):
+        enemies.append(entities.Enemy(20, enemiesX + (i * 40), enemiesY + (j * 40), 1))
 
 # First fills the screen with black and then call the draw functions of
 # all the entities in the game
@@ -24,6 +31,8 @@ def renderScreen():
     ship.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
+    for enemy in enemies:
+        enemy.draw(screen)
     pygame.display.update()
 
 # Main loop
@@ -48,12 +57,26 @@ while True:
     elif keys[K_LEFT]:
         ship.move(LEFT)
     
+    goingRight = True
+    if enemies[nColumns - 1].x >= width - enemiesX + 20:
+        goingRight = False
+    for enemy in enemies:
+        if goingRight:
+            enemy.move(RIGHT)
+        else:
+            enemy.move(LEFT)
+    
     # Moves each bullet and remove the ones which are of the screen
     for bullet in bullets:
         if bullet.inScreen:
             bullet.move()
         else:
             bullets.remove(bullet)
+    
+    for bullet in bullets:
+        for enemy in enemies:
+            if bullet.collidedWith(enemy):
+                enemies.remove(enemy)
 
     renderScreen()
 
