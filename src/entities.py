@@ -10,8 +10,6 @@ enemyImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemy.png")
 class Ship():
     def __init__(self, size, x, y, speed):
         self.size = size
-        self.surface = pygame.Surface((size, size))
-        self.surface.fill((255, 255, 255))
         self.x = x
         self.y = y
         self.speed = speed
@@ -31,7 +29,6 @@ class Ship():
 class Enemy(Ship):
     def __init__(self, size, x, y, speed):
         super().__init__(size, x, y, speed)
-        self.surface.fill((255, 0, 0))
         self.isAlive = True
         self.direction = RIGHT
         self.previousDirection = LEFT
@@ -50,8 +47,9 @@ class Bullet():
         self.surface.fill((255, 255, 255))
         self.x = ship.x + (32)
         self.y = ship.y
-        self.speed = 15
+        self.speed = 10
         self.inScreen = True
+        self.hasCollided = False
 
     # Moves the bullet and checks if its of the screen
     def move(self):

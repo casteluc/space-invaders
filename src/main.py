@@ -28,7 +28,7 @@ enemySize = 40
 for i in range(nRows):
     row = []
     for j in range(nColumns):
-        row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY * 2 + (i * enemiesY), 1))
+        row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1))
     enemies.append(row)
 goingRight = True
 
@@ -65,9 +65,9 @@ while True:
     # Checks if the right and left keys are pressed, if so, moves
     # the ship in the current direction
     keys = pygame.key.get_pressed()
-    if keys[K_RIGHT]:
+    if keys[K_RIGHT] and ship.x + 64 < width:
         ship.move(RIGHT)
-    elif keys[K_LEFT]:
+    elif keys[K_LEFT] and ship.x > 0:
         ship.move(LEFT)
     if keys[K_SPACE] and ship.hasAmmo:
         bullets.append(entities.Bullet(ship))
@@ -107,12 +107,17 @@ while True:
             bullets.remove(bullet)
     
     # Checks for bullet collision with enemies
+    # bullet.hasCollided is used to chech if the bullet has already collided
+    # with an enemy ship, without the game would crash because the bullet could
+    # collid with to enemies at the same time
     for bullet in bullets:
         for i in range(nRows):
             for j in range(nColumns):
                 enemy = enemies[i][j]
-                if bullet.collidedWith(enemy) and enemy.isAlive:
-                    bullets.remove(bullet)
+                if bullet.collidedWith(enemy) and enemy.isAlive and bullet.hasCollided == False:
+                    if not bullet.hasCollided:
+                        bullets.remove(bullet)
+                        bullet.hasCollided = True
                     enemy.isAlive = False
 
     renderScreen()
