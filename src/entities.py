@@ -4,6 +4,9 @@ from pygame.locals import *
 START, STOP = 0, 1
 RIGHT, LEFT = 0, 1
 
+shipImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\ship.png")
+enemyImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemy.png")
+
 class Ship():
     def __init__(self, size, x, y, speed):
         self.size = size
@@ -23,7 +26,7 @@ class Ship():
 
     # Draws the ship in the screen
     def draw(self, screen):
-        screen.blit(self.surface, (self.x, self.y))  
+        screen.blit(shipImg, (self.x, self.y))  
 
 class Enemy(Ship):
     def __init__(self, size, x, y, speed):
@@ -36,6 +39,9 @@ class Enemy(Ship):
     # Moves the enemy ship down
     def moveDown(self):
         self.y += 3
+
+    def draw(self, screen):
+        screen.blit(enemyImg, (self.x, self.y))
 
 class Bullet():
     def __init__(self, ship):

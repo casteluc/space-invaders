@@ -9,25 +9,26 @@ START, STOP = 0, 1
 screenSize = width, height = 800, 600
 clock = pygame.time.Clock()
 localTime = time.time()
+space = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\space.png")
 
 # Creates the screen and its caption
 screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
 
 # Defines the entities variables
-ship = entities.Ship(20, (width // 2), (height - 120), 5)
+ship = entities.Ship(64, (width // 2), (height - 120), 5)
 bullets = []
 shipImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\ship.png")
 
 # Creates the enemies matrix
 enemies = []
-nRows, nColumns = 5, 12
+nRows, nColumns = 5, 8
 enemiesX, enemiesY = 50, 50
 enemySize = 40
 for i in range(nRows):
     row = []
     for j in range(nColumns):
-        row.append(entities.Enemy(25, enemiesX + (j * enemiesX), enemiesY + (i * enemiesY), 1))
+        row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY * 2 + (i * enemiesY), 1))
     enemies.append(row)
 goingRight = True
 
@@ -35,8 +36,8 @@ goingRight = True
 # First fills the screen with black and then call the draw functions of
 # all the entities in the game
 def renderScreen():
-    screen.fill((0, 0, 0))
-    screen.blit(shipImg, (ship.x, ship.y) )
+    screen.blit(space, (0, 0))
+    ship.draw(screen)
     # ship.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
