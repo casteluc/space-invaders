@@ -53,6 +53,8 @@ class Bullet():
     def draw(self, screen):
         screen.blit(self.surface, (self.x, self.y))
     
+    # Checks if the bullet collided with an enemy. Returns True 
+    # if it collided and False if not
     def collidedWith(self, enemy):
         onWidth = self.x < enemy.x + enemy.size - 1 and self.x > enemy.x - 2
         onHeight = self.y < enemy.y + enemy.size

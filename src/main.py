@@ -34,8 +34,6 @@ def renderScreen():
     ship.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
-    # for enemy in enemies:
-    #     enemy.draw(screen)
     for i in range(nRows):
         for j in range(nColumns):
             enemy = enemies[i][j]
