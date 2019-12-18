@@ -17,12 +17,15 @@ pygame.display.set_caption("Space Invaders")
 ship = entities.Ship(20, (width // 2), (height - 120), 5)
 bullets = []
 
+# Creates the enemies matrix
 enemies = []
 nRows, nColumns = 3, 10
 enemiesX, enemiesY = 50, 60
-for i in range(nColumns):
-    for j in range (nRows):
-        enemies.append(entities.Enemy(20, enemiesX + (i * 40), enemiesY + (j * 40), 1))
+for i in range(nRows):
+    row = []
+    for j in range(nColumns):
+        row.append(entities.Enemy(20, enemiesY + (j * 40), enemiesX + (i * 40), 1))
+    enemies.append(row)
 
 # First fills the screen with black and then call the draw functions of
 # all the entities in the game
@@ -31,8 +34,13 @@ def renderScreen():
     ship.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
-    for enemy in enemies:
-        enemy.draw(screen)
+    # for enemy in enemies:
+    #     enemy.draw(screen)
+    for i in range(nRows):
+        for j in range(nColumns):
+            enemy = enemies[i][j]
+            if enemy.isAlive:
+                enemy.draw(screen)
     pygame.display.update()
 
 # Main loop
@@ -57,14 +65,18 @@ while True:
     elif keys[K_LEFT]:
         ship.move(LEFT)
     
+    # Moves the direction of the enemies when they hit the border of the screen
+    # NOT WORKING PROPERLY!! MUST FIX!!
     goingRight = True
-    if enemies[nColumns - 1].x >= width - enemiesX + 20:
+    if enemies[0][nColumns - 1].x >= width - enemiesX + 20:
         goingRight = False
-    for enemy in enemies:
-        if goingRight:
-            enemy.move(RIGHT)
-        else:
-            enemy.move(LEFT)
+    for i in range(nRows):
+        for j in range(nColumns):
+            enemy = enemies[i][j]
+            if goingRight:
+                enemy.move(RIGHT)
+            else:
+                enemy.move(LEFT)
     
     # Moves each bullet and remove the ones which are of the screen
     for bullet in bullets:
@@ -73,10 +85,14 @@ while True:
         else:
             bullets.remove(bullet)
     
+    # Checks for bullet collision with enemies
     for bullet in bullets:
-        for enemy in enemies:
-            if bullet.collidedWith(enemy):
-                enemies.remove(enemy)
+        for i in range(nRows):
+            for j in range(nColumns):
+                enemy = enemies[i][j]
+                if bullet.collidedWith(enemy) and enemy.isAlive:
+                    bullets.remove(bullet)
+                    enemy.isAlive = False
 
     renderScreen()
 
