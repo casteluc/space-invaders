@@ -1,24 +1,26 @@
-import pygame, sys, time
+import pygame, sys, time, random
 import entities
 from pygame.locals import *
 
 pygame.init()
 
+FRIEND, ENEMY = 0, 1
+UP, DOWN = 1, -1
 RIGHT, LEFT = 0, 1
 START, STOP = 0, 1
 screenSize = width, height = 800, 600
 clock = pygame.time.Clock()
 localTime = time.time()
-space = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\space.png")
 
 # Creates the screen and its caption
 screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
+space = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\space.png")
+
 
 # Defines the entities variables
 ship = entities.Ship(64, (width // 2), (height - 120), 5)
 bullets = []
-shipImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\ship.png")
 
 # Creates the enemies matrix
 enemies = []
@@ -32,7 +34,42 @@ for i in range(nRows):
     enemies.append(row)
 goingRight = True
 
+def gameOver():
+    time.sleep(2)
+    # Making text 1 "GAME OVER"
+    font = pygame.font.Font('freesansbold.ttf', 72) 
+    text1 = font.render('GAME OVER', True, (255, 255, 255)) 
+    text1Rect = text1.get_rect()
+    text1Rect.center = (width/2, height/2)
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit()
+
+        # Renderizing the screen
+        screen.fill((0, 0, 0))
+        screen.blit(text1, text1Rect)
+        pygame.display.update()
+
+def enemyShoot():
+    enemyFront = [None] * nColumns
+    for i in range(nRows):
+        for j in range(nColumns):
+            enemy = enemies[i][j]
+            if enemy.isAlive:
+                enemyFront[j] = enemy
+    
+    cleanEnemyFront = []
+    for enemy in enemyFront:
+        if enemy != None:
+            cleanEnemyFront.append(enemy)
+
+    if len(cleanEnemyFront) > 0:
+        shootingEnemy = random.randint(0, len(cleanEnemyFront) - 1)
+        bullets.append(entities.Bullet(cleanEnemyFront[shootingEnemy], DOWN, ENEMY))
+    else:
+        gameOver()
+        
 # First fills the screen with black and then call the draw functions of
 # all the entities in the game
 def renderScreen():
@@ -49,7 +86,7 @@ def renderScreen():
     pygame.display.update()
 
 # Main loop
-while True:
+while ship.isAlive:
     # Defines the game FPS
     clock.tick(60)
 
@@ -57,6 +94,8 @@ while True:
     if time.time() - localTime >= 1:
         localTime = time.time()
         ship.hasAmmo = True
+        enemyShoot()
+        enemyShoot()
 
     # Checks for the events in a list of events
     for event in pygame.event.get():
@@ -70,7 +109,7 @@ while True:
     elif keys[K_LEFT] and ship.x > 0:
         ship.move(LEFT)
     if keys[K_SPACE] and ship.hasAmmo:
-        bullets.append(entities.Bullet(ship))
+        bullets.append(entities.Bullet(ship, UP, FRIEND))
         ship.hasAmmo = False
     
     # Checks which side the enemies must go (if they had hit the border)
@@ -105,19 +144,26 @@ while True:
             bullet.move()
         else:
             bullets.remove(bullet)
-    
+
     # Checks for bullet collision with enemies
     # bullet.hasCollided is used to chech if the bullet has already collided
     # with an enemy ship, without the game would crash because the bullet could
-    # collid with to enemies at the same time
+    # collid with to enemies at the same time. In the else is checked if any 
+    # bullet has collided with the player ship
     for bullet in bullets:
-        for i in range(nRows):
-            for j in range(nColumns):
-                enemy = enemies[i][j]
-                if bullet.collidedWith(enemy) and enemy.isAlive and bullet.hasCollided == False:
-                    if not bullet.hasCollided:
-                        bullets.remove(bullet)
-                        bullet.hasCollided = True
-                    enemy.isAlive = False
+        if bullet.shooter == FRIEND:
+            for i in range(nRows):
+                for j in range(nColumns):
+                    enemy = enemies[i][j]
+                    if bullet.collidedWith(enemy) and enemy.isAlive and bullet.hasCollided == False:
+                        if not bullet.hasCollided :
+                            bullets.remove(bullet)
+                            bullet.hasCollided = True
+                        enemy.isAlive = False
+        else:
+            if bullet.collidedWith(ship):
+                ship.isAlive = False
 
     renderScreen()
+
+gameOver()
