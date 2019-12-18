@@ -13,7 +13,12 @@ class Ship():
         self.x = x
         self.y = y
         self.speed = speed
+        self.hasAmmo = False
     
+    # Adds ammo to the ship
+    def getAmmo(self, num):
+        self.ammo += num
+
     # Moves the ship according to its speed
     def move(self, direction):
         if direction == RIGHT:
@@ -24,13 +29,21 @@ class Ship():
     # Draws the ship in the screen
     def draw(self, screen):
         screen.blit(self.surface, (self.x, self.y))
+    
+        
 
 class Enemy(Ship):
     def __init__(self, size, x, y, speed):
         super().__init__(size, x, y, speed)
         self.surface.fill((255, 0, 0))
         self.isAlive = True
-    
+        self.direction = RIGHT
+        self.previousDirection = LEFT
+
+    # Moves the enemy ship down
+    def moveDown(self):
+        self.y += 3
+
 class Bullet():
 
     def __init__(self, ship):
@@ -48,7 +61,7 @@ class Bullet():
             self.y -= self.speed
         else:
             self.inScreen = False
-
+    
     # Draws the bullet in the screen
     def draw(self, screen):
         screen.blit(self.surface, (self.x, self.y))
@@ -62,6 +75,3 @@ class Bullet():
             return True
         else:
             return False
-    
-
-    
