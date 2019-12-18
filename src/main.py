@@ -26,6 +26,7 @@ for i in range(nRows):
     for j in range(nColumns):
         row.append(entities.Enemy(20, enemiesY + (j * 40), enemiesX + (i * 40), 1))
     enemies.append(row)
+goingRight = True
 
 # First fills the screen with black and then call the draw functions of
 # all the entities in the game
@@ -63,11 +64,13 @@ while True:
     elif keys[K_LEFT]:
         ship.move(LEFT)
     
-    # Moves the direction of the enemies when they hit the border of the screen
-    # NOT WORKING PROPERLY!! MUST FIX!!
-    goingRight = True
-    if enemies[0][nColumns - 1].x >= width - enemiesX + 20:
+    # Checks which side the enemies must go (if they had hit the border)
+    if enemies[0][nColumns - 1].x >= width - enemiesX:
         goingRight = False
+    if enemies[0][0].x < enemiesX:
+        goingRight = True
+
+    # Moves all the enemies
     for i in range(nRows):
         for j in range(nColumns):
             enemy = enemies[i][j]
@@ -75,7 +78,7 @@ while True:
                 enemy.move(RIGHT)
             else:
                 enemy.move(LEFT)
-    
+
     # Moves each bullet and remove the ones which are of the screen
     for bullet in bullets:
         if bullet.inScreen:

@@ -57,7 +57,7 @@ class Bullet():
     # if it collided and False if not
     def collidedWith(self, enemy):
         onWidth = self.x < enemy.x + enemy.size - 1 and self.x > enemy.x - 2
-        onHeight = self.y < enemy.y + enemy.size
+        onHeight = self.y < enemy.y + enemy.size and self.y + 20 > enemy.y
         if onWidth and onHeight:
             return True
         else:
