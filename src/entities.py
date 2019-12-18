@@ -5,7 +5,6 @@ START, STOP = 0, 1
 RIGHT, LEFT = 0, 1
 
 class Ship():
-
     def __init__(self, size, x, y, speed):
         self.size = size
         self.surface = pygame.Surface((size, size))
@@ -14,10 +13,6 @@ class Ship():
         self.y = y
         self.speed = speed
         self.hasAmmo = False
-    
-    # Adds ammo to the ship
-    def getAmmo(self, num):
-        self.ammo += num
 
     # Moves the ship according to its speed
     def move(self, direction):
@@ -28,9 +23,7 @@ class Ship():
 
     # Draws the ship in the screen
     def draw(self, screen):
-        screen.blit(self.surface, (self.x, self.y))
-    
-        
+        screen.blit(self.surface, (self.x, self.y))  
 
 class Enemy(Ship):
     def __init__(self, size, x, y, speed):
@@ -45,12 +38,11 @@ class Enemy(Ship):
         self.y += 3
 
 class Bullet():
-
     def __init__(self, ship):
         self.size = (2, 20)
         self.surface = pygame.Surface(self.size)
         self.surface.fill((255, 255, 255))
-        self.x = ship.x + (ship.size // 2)
+        self.x = ship.x + (32)
         self.y = ship.y
         self.speed = 15
         self.inScreen = True
