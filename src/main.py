@@ -9,7 +9,7 @@ FRIEND, ENEMY = 0, 1
 UP, DOWN = 1, -1
 RIGHT, LEFT = 0, 1
 START, STOP = 0, 1
-screenSize = width, height = 800, 600
+
 clock = pygame.time.Clock()
 localTime = time.time()
 
@@ -24,14 +24,16 @@ pygame.mixer.music.load("C:\casteluc\coding\spaceInvaders\sounds\music.wav")
 pygame.mixer.music.play(-1)
 
 # Creates the screen and its caption
+screenSize = WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
 space = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\space.png")
 
 
 # Defines the entities variables
-ship = entities.Ship(64, (width // 2), (height - 120), 5)
+ship = entities.Ship(64, (WIDTH // 2), (HEIGHT - 120), 5)
 bullets = []
+score = 0
 
 # Creates the enemies matrix
 enemies = []
@@ -52,9 +54,9 @@ def gameOver():
     time.sleep(2)
     # Making text 1 "GAME OVER"
     font = pygame.font.Font('freesansbold.ttf', 72) 
-    text1 = font.render('GAME OVER', True, (255, 255, 255)) 
-    text1Rect = text1.get_rect()
-    text1Rect.center = (width/2, height/2)
+    text = font.render('GAME OVER', True, (255, 255, 255)) 
+    textRect = text.get_rect()
+    textRect.center = (WIDTH/2, HEIGHT/2)
 
     pygame.mixer.music.stop()
     gameOverVoice.play()
@@ -65,7 +67,7 @@ def gameOver():
 
         # Renderizing the screen
         screen.fill((0, 0, 0))
-        screen.blit(text1, text1Rect)
+        screen.blit(text, textRect)
         pygame.display.update()
 
 # Defines the enemy shooting actions
@@ -106,6 +108,7 @@ def renderScreen():
             enemy = enemies[i][j]
             if enemy.life > 0:
                 enemy.draw(screen)
+    screen.blit(text, textRect)
     pygame.display.update()
 
 # Main loop
@@ -128,7 +131,7 @@ while True:
     # Checks if the right and left keys are pressed, if so, moves
     # the ship in the current direction
     keys = pygame.key.get_pressed()
-    if keys[K_RIGHT] and ship.hitBox[0] + 64 < width:
+    if keys[K_RIGHT] and ship.hitBox[0] + 64 < WIDTH:
         ship.move(RIGHT)
     elif keys[K_LEFT] and ship.hitBox[0] > 0:
         ship.move(LEFT)
@@ -138,7 +141,7 @@ while True:
         ship.hasAmmo = False
     
     # Checks which side the enemies must go (if they had hit the border)
-    if enemies[0][nColumns - 1].x >= width - (enemiesX + enemySize):
+    if enemies[0][nColumns - 1].x >= WIDTH - (enemiesX + enemySize):
         goingRight = False
     if enemies[0][0].x < enemiesX:
         goingRight = True
@@ -184,6 +187,7 @@ while True:
                         if not bullet.hasCollided:
                             bullets.remove(bullet)
                             bullet.hasCollided = True
+                            score += 10
                         enemy.life -= 1
                         explosionSound.play()
         else:
@@ -191,5 +195,10 @@ while True:
                 ship.isAlive = False
                 explosionSound.play()
                 gameOver()
+
+    font = pygame.font.Font('freesansbold.ttf', 20) 
+    text = font.render('Score: %d' % score, True, (255, 255, 255)) 
+    textRect = text.get_rect()
+    textRect.center = (60, 20)
 
     renderScreen()
