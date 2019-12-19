@@ -5,9 +5,11 @@ FRIEND, ENEMY = 0, 1
 UP, DOWN = 1, -1
 START, STOP = 0, 1
 RIGHT, LEFT = 0, 1
+BIG, SMALL = 0, 1
 
 shipImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\ship.png")
 enemyImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemy.png")
+brokenEnemy = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemyBroken.png")
 
 class Ship():
     def __init__(self, size, x, y, speed):
@@ -32,11 +34,16 @@ class Ship():
         screen.blit(shipImg, (self.x, self.y))  
 
 class Enemy(Ship):
-    def __init__(self, size, x, y, speed):
+    def __init__(self, size, x, y, speed, life):
         super().__init__(size, x, y, speed)
         self.direction = RIGHT
+        self.life = life
         self.previousDirection = LEFT
         self.hitBox = (self.x + 3, self.y + 8, 57, 45)
+        if life == 2:
+            self.type = BIG
+        else:
+            self.type = SMALL
 
     # Move the enemy ship and updates its hitbox
     def move(self, direction):
@@ -50,7 +57,14 @@ class Enemy(Ship):
         
     # Draw enemy on screen
     def draw(self, screen):
-        screen.blit(enemyImg, (self.x, self.y))
+        if self.type == BIG:
+            if self.life == 2:
+                screen.blit(enemyImg, (self.x, self.y))
+            else:
+                screen.blit(brokenEnemy, (self.x, self.y))
+        else:
+            screen.blit(enemyImg, (self.x, self.y))
+            
 
 class Bullet():
     def __init__(self, ship, direction, shooter):

@@ -41,7 +41,10 @@ enemySize = 40
 for i in range(nRows):
     row = []
     for j in range(nColumns):
-        row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1))
+        if i <= 1:
+            row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1, 2))
+        else:
+            row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1, 1))
     enemies.append(row)
 goingRight = True
 
@@ -72,7 +75,7 @@ def enemyShoot():
     for i in range(nRows):
         for j in range(nColumns):
             enemy = enemies[i][j]
-            if enemy.isAlive:
+            if enemy.life > 0:
                 enemyFront[j] = enemy
     
     # Checks if there were any empty columns, if so, these ones
@@ -101,7 +104,7 @@ def renderScreen():
     for i in range(nRows):
         for j in range(nColumns):
             enemy = enemies[i][j]
-            if enemy.isAlive:
+            if enemy.life > 0:
                 enemy.draw(screen)
     pygame.display.update()
 
@@ -168,7 +171,7 @@ while True:
             bullets.remove(bullet)
 
     # Checks for bullet collision with enemies
-    # bullet.hasCollided is used to chech if the bullet has already collided
+    # bullet.hasCollided is used to check if the bullet has already collided
     # with an enemy ship, without the game would crash because the bullet could
     # collid with to enemies at the same time. In the else is checked if any 
     # bullet has collided with the player ship
@@ -177,11 +180,11 @@ while True:
             for i in range(nRows):
                 for j in range(nColumns):
                     enemy = enemies[i][j]
-                    if bullet.collidedWith(enemy) and enemy.isAlive and bullet.hasCollided == False:
+                    if bullet.collidedWith(enemy) and enemy.life > 0 and bullet.hasCollided == False:
                         if not bullet.hasCollided:
                             bullets.remove(bullet)
                             bullet.hasCollided = True
-                        enemy.isAlive = False
+                        enemy.life -= 1
                         explosionSound.play()
         else:
             if bullet.collidedWith(ship):
@@ -190,5 +193,3 @@ while True:
                 gameOver()
 
     renderScreen()
-
-
