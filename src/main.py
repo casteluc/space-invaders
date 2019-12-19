@@ -13,13 +13,16 @@ screenSize = width, height = 800, 600
 clock = pygame.time.Clock()
 localTime = time.time()
 
+# Loads all the game sounds
 shipShooting = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\shipShooting.wav")
 enemyShooting = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\enemyShooting.wav")
 gameOverVoice = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\gameOver.wav")
 explosionSound = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\explosion.wav")
 
+# Loads and plays music infinetly 
 pygame.mixer.music.load("C:\casteluc\coding\spaceInvaders\sounds\music.wav")
 pygame.mixer.music.play(-1)
+
 # Creates the screen and its caption
 screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
@@ -62,7 +65,9 @@ def gameOver():
         screen.blit(text1, text1Rect)
         pygame.display.update()
 
+# Defines the enemy shooting actions
 def enemyShoot():
+    # Picks the enemies that are in the last row of the matriz
     enemyFront = [None] * nColumns
     for i in range(nRows):
         for j in range(nColumns):
@@ -70,11 +75,15 @@ def enemyShoot():
             if enemy.isAlive:
                 enemyFront[j] = enemy
     
+    # Checks if there were any empty columns, if so, these ones
+    # are removed from the enemy front
     cleanEnemyFront = []
     for enemy in enemyFront:
         if enemy != None:
             cleanEnemyFront.append(enemy)
 
+    # Checks if there are still enemies alive and makes a random enemy of
+    # the enemy front shoot
     if len(cleanEnemyFront) > 0:
         shootingEnemy = random.randint(0, len(cleanEnemyFront) - 1)
         bullets.append(entities.Bullet(cleanEnemyFront[shootingEnemy], DOWN, ENEMY))
@@ -87,7 +96,6 @@ def enemyShoot():
 def renderScreen():
     screen.blit(space, (0, 0))
     ship.draw(screen)
-    # ship.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
     for i in range(nRows):
@@ -98,7 +106,8 @@ def renderScreen():
     pygame.display.update()
 
 # Main loop
-while ship.isAlive:
+time.sleep(1)
+while True:
     # Defines the game FPS
     clock.tick(60)
 
@@ -116,9 +125,9 @@ while ship.isAlive:
     # Checks if the right and left keys are pressed, if so, moves
     # the ship in the current direction
     keys = pygame.key.get_pressed()
-    if keys[K_RIGHT] and ship.x + 64 < width:
+    if keys[K_RIGHT] and ship.hitBox[0] + 64 < width:
         ship.move(RIGHT)
-    elif keys[K_LEFT] and ship.x > 0:
+    elif keys[K_LEFT] and ship.hitBox[0] > 0:
         ship.move(LEFT)
     if keys[K_SPACE] and ship.hasAmmo:
         bullets.append(entities.Bullet(ship, UP, FRIEND))
@@ -149,7 +158,7 @@ while ship.isAlive:
         for i in range(nRows):
             for j in range(nColumns):
                 enemy = enemies[i][j]
-                enemy.moveDown()
+                enemy.move(DOWN)
     
     # Moves each bullet and remove the ones which are of the screen
     for bullet in bullets:

@@ -17,13 +17,15 @@ class Ship():
         self.speed = speed
         self.hasAmmo = False
         self.isAlive = True
+        self.hitBox = (self.x + 7, self.y + 5, 50, 54)
 
-    # Moves the ship according to its speed
+    # Moves the ship and updates its hitbox
     def move(self, direction):
         if direction == RIGHT:
             self.x += self.speed
         else:
             self.x -= self.speed
+        self.hitBox = (self.x + 7, self.y + 5, 50, 54)
 
     # Draws the ship in the screen
     def draw(self, screen):
@@ -34,11 +36,19 @@ class Enemy(Ship):
         super().__init__(size, x, y, speed)
         self.direction = RIGHT
         self.previousDirection = LEFT
+        self.hitBox = (self.x + 3, self.y + 8, 57, 45)
 
-    # Moves the enemy ship down
-    def moveDown(self):
-        self.y += 10
-
+    # Move the enemy ship and updates its hitbox
+    def move(self, direction):
+        if direction == RIGHT:
+            self.x += self.speed
+        elif direction == LEFT:
+            self.x -= self.speed
+        elif direction == DOWN:
+            self.y += 10
+        self.hitBox = (self.x + 3, self.y + 8, 57, 45)
+        
+    # Draw enemy on screen
     def draw(self, screen):
         screen.blit(enemyImg, (self.x, self.y))
 
@@ -71,8 +81,8 @@ class Bullet():
     # Checks if the bullet collided with an enemy. Returns True 
     # if it collided and False if not
     def collidedWith(self, ship):
-        onWidth = self.x < ship.x + ship.size - 1 and self.x > ship.x - 2
-        onHeight = self.y < ship.y + ship.size and self.y + 20 > ship.y
+        onWidth = self.x < ship.hitBox[0] + ship.hitBox[2] - 1 and self.x > ship.hitBox[0] - 2
+        onHeight = self.y < ship.hitBox[1] + ship.hitBox[3] and self.y + 20 > ship.hitBox[1]
         if onWidth and onHeight:
             return True
         else:
