@@ -37,7 +37,7 @@ class Enemy(Ship):
 
     # Moves the enemy ship down
     def moveDown(self):
-        self.y += 7
+        self.y += 10
 
     def draw(self, screen):
         screen.blit(enemyImg, (self.x, self.y))
@@ -54,6 +54,8 @@ class Bullet():
         self.hasCollided = False
         self.direction = direction
         self.shooter = shooter
+        if self.shooter == ENEMY:
+            self.surface.fill((255, 0, 0))
 
     # Moves the bullet and checks if its of the screen
     def move(self):

@@ -3,6 +3,7 @@ import entities
 from pygame.locals import *
 
 pygame.init()
+pygame.mixer.pre_init(44100, 16, 2, 4096)
 
 FRIEND, ENEMY = 0, 1
 UP, DOWN = 1, -1
@@ -12,6 +13,13 @@ screenSize = width, height = 800, 600
 clock = pygame.time.Clock()
 localTime = time.time()
 
+shipShooting = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\shipShooting.wav")
+enemyShooting = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\enemyShooting.wav")
+gameOverVoice = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\gameOver.wav")
+explosionSound = pygame.mixer.Sound("C:\casteluc\coding\spaceInvaders\sounds\explosion.wav")
+
+pygame.mixer.music.load("C:\casteluc\coding\spaceInvaders\sounds\music.wav")
+pygame.mixer.music.play(-1)
 # Creates the screen and its caption
 screen = pygame.display.set_mode(screenSize)
 pygame.display.set_caption("Space Invaders")
@@ -42,6 +50,9 @@ def gameOver():
     text1Rect = text1.get_rect()
     text1Rect.center = (width/2, height/2)
 
+    pygame.mixer.music.stop()
+    gameOverVoice.play()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
@@ -67,6 +78,7 @@ def enemyShoot():
     if len(cleanEnemyFront) > 0:
         shootingEnemy = random.randint(0, len(cleanEnemyFront) - 1)
         bullets.append(entities.Bullet(cleanEnemyFront[shootingEnemy], DOWN, ENEMY))
+        enemyShooting.play()
     else:
         gameOver()
         
@@ -110,6 +122,7 @@ while ship.isAlive:
         ship.move(LEFT)
     if keys[K_SPACE] and ship.hasAmmo:
         bullets.append(entities.Bullet(ship, UP, FRIEND))
+        shipShooting.play()
         ship.hasAmmo = False
     
     # Checks which side the enemies must go (if they had hit the border)
@@ -156,14 +169,17 @@ while ship.isAlive:
                 for j in range(nColumns):
                     enemy = enemies[i][j]
                     if bullet.collidedWith(enemy) and enemy.isAlive and bullet.hasCollided == False:
-                        if not bullet.hasCollided :
+                        if not bullet.hasCollided:
                             bullets.remove(bullet)
                             bullet.hasCollided = True
                         enemy.isAlive = False
+                        explosionSound.play()
         else:
             if bullet.collidedWith(ship):
                 ship.isAlive = False
+                explosionSound.play()
+                gameOver()
 
     renderScreen()
 
-gameOver()
+
