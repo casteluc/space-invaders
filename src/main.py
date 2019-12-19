@@ -10,6 +10,7 @@ UP, DOWN = 1, -1
 RIGHT, LEFT = 0, 1
 START, STOP = 0, 1
 
+# Starts clock and stores the current time
 clock = pygame.time.Clock()
 localTime = time.time()
 
@@ -43,21 +44,26 @@ enemySize = 40
 for i in range(nRows):
     row = []
     for j in range(nColumns):
+        # Enemies on the first and second rows have 2 lives
         if i <= 1:
             row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1, 2))
+        # Enemies after the second row have only 1 life
         else:
             row.append(entities.Enemy(64, enemiesX * 2 + (j * enemiesX * 1.5), enemiesY + (i * enemiesY), 1, 1))
     enemies.append(row)
 goingRight = True
 
 def gameOver():
+    # Brief time sleep before showing the game over screen
     time.sleep(2)
+
     # Making text 1 "GAME OVER"
     font = pygame.font.Font('freesansbold.ttf', 72) 
     text = font.render('GAME OVER', True, (255, 255, 255)) 
     textRect = text.get_rect()
     textRect.center = (WIDTH/2, HEIGHT/2)
 
+    # Stops the music and says "game over"
     pygame.mixer.music.stop()
     gameOverVoice.play()
 
@@ -196,6 +202,7 @@ while True:
                 explosionSound.play()
                 gameOver()
 
+    # Loads and configures the score text
     font = pygame.font.Font('freesansbold.ttf', 20) 
     text = font.render('Score: %d' % score, True, (255, 255, 255)) 
     textRect = text.get_rect()

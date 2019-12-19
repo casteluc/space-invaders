@@ -7,6 +7,7 @@ START, STOP = 0, 1
 RIGHT, LEFT = 0, 1
 BIG, SMALL = 0, 1
 
+# Loads game images
 shipImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\ship.png")
 enemyImg = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemy.png")
 brokenEnemy = pygame.image.load("C:\casteluc\coding\spaceInvaders\img\enemyBroken.png")
